@@ -1,0 +1,18 @@
+# toktop config — copy to ~/.config/toktop/config.toml
+# (Windows: %APPDATA%\toktop\config.toml, or point $TOKTOP_CONFIG at it). Everything is optional.
+
+# Interface language: "en" or "es". Default: your system locale. Also: --lang or $TOKTOP_LANG.
+# lang = "en"
+
+[paths]
+# Only needed if an app keeps its data somewhere unusual.
+# opencode = "~/.local/share/opencode/opencode.db"
+# zcode = "~/.zcode/cli/db/db.sqlite"
+# claude = "~/.claude/projects"
+# openbot = "~/Library/Application Support/OpenBot/openbot.db"
+# dsh_log = "~/.local/share/toktop/deepseek-harness.jsonl"
+# dsh_sessions = "~/.dsh/sessions"
+
+[sources]
+# Sources toktop should not read: opencode, zcode, claude, dsh, openbot
+# disabled = ["zcode"]
