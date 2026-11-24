@@ -166,4 +166,21 @@ ES = {
     "Output": "Output",
     "input {inp} · output {out} · cache {cr}": "input {inp} · output {out} · caché {cr}",
     "input {inp} · output {out} · cache {cr} · reas {reas}": "input {inp} · output {out} · caché {cr} · reas {reas}",
+    # app picker
+    "apps": "apps",
+    "Which apps do you use?": "¿Qué apps usas?",
+    "toktop will read the ones you check. You can change this any time with the a key.":
+        "toktop leerá las que marques. Puedes cambiarlo cuando quieras con la tecla a.",
+    "found": "encontrada",
+    "not found": "no encontrada",
+    "needs a one-time setup": "requiere configurarla una vez",
+    "Save": "Guardar",
+    "Cancel": "Cancelar",
+    "One more step for some apps": "Un paso más para algunas apps",
+    "These apps don't keep a usage record toktop can read. Copy this text and give it to your AI agent (Claude Code, Codex…): it will set them up. Their data shows up from then on.":
+        "Estas apps no guardan un registro de uso que toktop pueda leer. Copia este texto y pásaselo a tu agente de IA "
+        "(Claude Code, Codex…): él las configurará. Sus datos aparecerán a partir de entonces.",
+    "Copy": "Copiar",
+    "Done": "Hecho",
+    "Copied to the clipboard": "Copiado al portapapeles",
 }

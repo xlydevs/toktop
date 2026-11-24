@@ -6,13 +6,28 @@
 
 [paths]
 # Only needed if an app keeps its data somewhere unusual.
-# opencode = "~/.local/share/opencode/opencode.db"
-# zcode = "~/.zcode/cli/db/db.sqlite"
 # claude = "~/.claude/projects"
+# codex = "~/.codex/sessions"
+# gemini = "~/.gemini/tmp"
+# qwen = "~/.qwen/projects"
+# opencode = "~/.local/share/opencode/opencode.db"
+# goose = "~/.local/share/goose/sessions/sessions.db"
+# amp = "~/.local/share/amp/threads"
+# cline = "~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/tasks"
+# zed = "~/Library/Application Support/Zed/threads/threads.db"
+# zcode = "~/.zcode/cli/db/db.sqlite"
 # openbot = "~/Library/Application Support/OpenBot/openbot.db"
 # dsh_log = "~/.local/share/toktop/deepseek-harness.jsonl"
 # dsh_sessions = "~/.dsh/sessions"
+# aider_log = "~/.local/share/toktop/aider-analytics.jsonl"
 
 [sources]
-# Sources toktop should not read: opencode, zcode, claude, dsh, openbot
+# Apps toktop reads. Written by the picker shown on first launch (key `a` in the dashboard).
+# Names: claude codex gemini qwen opencode goose amp cline roo kilo zed zcode openbot dsh aider
+# enabled = ["claude", "codex", "opencode"]
+# Or keep them all and skip a few:
 # disabled = ["zcode"]
+
+[colors]
+# Override a source's colour.
+# claude = "#f4a98a"

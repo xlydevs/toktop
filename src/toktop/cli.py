@@ -4,7 +4,7 @@ import sys
 import tempfile
 
 from . import __version__, config, i18n
-from .common import NAME, SRC_OF, SRCS
+from .common import NAME, SRC_OF, SRCS, set_enabled
 from .i18n import t
 
 
@@ -25,15 +25,17 @@ def main(argv=None):
     ap.add_argument("--lang", choices=i18n.SUPPORTED, help=t("interface language"))
     ap.add_argument("-V", "--version", action="version", version=f"toktop {__version__}")
     args = ap.parse_args(argv)
-    srcs = set(SRCS) if args.source == "all" else {SRC_OF[args.source]}
-
     if args.demo:
         from . import demo
         tmp = tempfile.mkdtemp(prefix="toktop-demo-")
         config.set_data_dir(tmp)
         config.OFFLINE = True
         demo.populate()
+        set_enabled(demo.SHARE)
 
+    if args.source != "all" and SRC_OF[args.source] not in SRCS:
+        set_enabled([*SRCS, SRC_OF[args.source]])
+    srcs = set(SRCS) if args.source == "all" else {SRC_OF[args.source]}
     from .history import sync
     if args.rebuild:
         found, errors = sync(rebuild=True)

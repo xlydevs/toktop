@@ -36,7 +36,7 @@ def by_day(rows):
 
 def by_src(rows):
     out = dict.fromkeys(SRCS, 0)
-    for r in rows: out[r[0]] += rtot(r)
+    for r in rows: out[r[0]] = out.get(r[0], 0) + rtot(r)
     return out
 
 

@@ -12,15 +12,17 @@ from textual.theme import Theme
 from textual.widget import Widget
 from textual.widgets import Button, DataTable, Footer, Input, Static, TabbedContent, TabPane
 
-from . import config, i18n
+from . import config, i18n, onboard, sources
 from .common import (
     ACCENT,
+    ALL,
     BG,
     BRIGHT,
     COLOR,
     DIM,
     FG,
     KEY_OF,
+    KIND,
     MUTED,
     NAME,
     OK_C,
@@ -32,6 +34,7 @@ from .common import (
     human_full,
     money,
     seg_widths,
+    set_enabled,
     tidy_name,
 )
 from .history import load_history, sync
@@ -404,7 +407,7 @@ class TokensApp(App):
     #price-notes { height: auto; color: #7c879f; margin-top: 1; padding: 0 1; }
     #price-table { height: auto; max-height: 24; }
     Footer { background: $surface; }
-    """
+    """ + onboard.CSS
     BINDINGS = [
         Binding("q", "quit", t("quit")),
         Binding("escape", "unfocus", show=False),
@@ -415,6 +418,7 @@ class TokensApp(App):
         *[Binding(k, f"src('{k}')", show=False) for k in KEY_OF],
         Binding("slash", "search", t("search"), key_display="/"),
         Binding("r", "resync", t("sync")),
+        Binding("a", "apps", t("apps")),
         *[Binding(str(i + 1), f"tab('{tab}')", show=False) for i, tab in
           enumerate(("home", "calendar", "models", "sessions", "prices"))],
     ]
@@ -440,7 +444,7 @@ class TokensApp(App):
                 for k, lbl in PERIODS:
                     yield Button(t(lbl), id=f"per-{k}", compact=True)
             with Horizontal(id="chips"):
-                for s in SRCS:
+                for s in ALL:
                     yield Button(f"● {NAME[s]}", id=f"chip-{s}", compact=True)
             yield Static("", id="status")
         with TabbedContent(initial="home", id="tabs"):
@@ -502,6 +506,26 @@ class TokensApp(App):
         self.refresh_all()
         if self.start_tab != "home": self.action_tab(self.start_tab)
         self.action_resync()
+        if not config.OFFLINE and config.enabled_sources() is None:
+            have = {r[0] for r in self.rows} | sources.detected()
+            self.push_screen(onboard.AppsScreen([k for k in ALL if k in have], first_run=True), self.apps_chosen)
+
+    # ── apps ──
+    def action_apps(self):
+        if config.OFFLINE: self.bell(); return
+        self.push_screen(onboard.AppsScreen(SRCS), self.apps_chosen)
+
+    def apps_chosen(self, keys):
+        if keys is None: return
+        new = [k for k in keys if k not in SRCS]
+        config.save_enabled([NAME[k] for k in ALL if k in keys])
+        set_enabled(keys)
+        sources.configure()
+        self.srcs = (self.srcs & set(SRCS)) | set(new)
+        self.refresh_all()
+        self.action_resync()
+        manual = [k for k in keys if KIND[k] == "manual" and k not in sources.detected()]
+        if manual: self.push_screen(onboard.SetupScreen(manual))
 
     # ── background sync ──
     @work(thread=True, exclusive=True)
@@ -549,9 +573,9 @@ class TokensApp(App):
 
     def refresh_all(self):
         avail = {r[0] for r in self.rows} | self.found
-        for s in SRCS:
+        for s in ALL:
             chip = self.query_one(f"#chip-{s}")
-            chip.display = s in avail
+            chip.display = s in SRCS and s in avail
             chip.set_class(s in self.srcs, "-on")
             chip.set_class(s not in self.srcs, "-off")
             chip.styles.color = COLOR[s] if s in self.srcs else "#3a4358"

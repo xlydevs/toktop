@@ -14,6 +14,9 @@ def isolated(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "CONFIG", {})
     monkeypatch.setattr(sources, "HOME", tmp_path / "home")  # never touch the real apps
     monkeypatch.setattr(config, "env_dirs", lambda: [])
+    for var in ("XDG_DATA_HOME", "XDG_CONFIG_HOME", "APPDATA", "LOCALAPPDATA", "CODEX_HOME", "CLAUDE_CONFIG_DIR"):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setenv("TOKTOP_CONFIG", str(tmp_path / "config.toml"))
     monkeypatch.setattr(config, "OFFLINE", False)
     monkeypatch.setattr(prices, "_PRICES", None)
     i18n.set_lang("en")

@@ -3,7 +3,7 @@ import sqlite3
 from datetime import datetime
 
 from . import config, sources
-from .common import NAME
+from .common import NAME, SRCS
 
 # ───────────────────────── history ─────────────────────────
 
@@ -39,7 +39,9 @@ def sync(rebuild=False):
     """Read the apps and dump them into the history. Each value keeps the maximum
     seen, so what an app deletes is not subtracted. Returns (sources, errors)."""
     live, errors = sources.Live(), []
+    want = set(SRCS) | ({"cc", "oc"} if "ob" in SRCS else set())  # OpenBot sessions come from those two readers
     for src, fn in (() if config.OFFLINE else sources.LOADERS):
+        if src not in want: continue
         try:
             fn(live)
         except Exception as e:  # a broken app must not take down the others

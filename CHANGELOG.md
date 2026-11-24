@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- New sources: Codex CLI, Gemini CLI, Qwen Code, Goose, Amp, Cline, Roo Code, Kilo Code and Zed.
+- App picker on first launch (and with `a`): check the apps you use; toktop finds their data.
+- dsh and Aider show copyable setup instructions for your AI agent.
+- `[colors]` in the config file overrides a source's colour.
+
 ## 0.1.0 — 2026-11-24
 
 First public release.

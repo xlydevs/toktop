@@ -1,6 +1,6 @@
 # toktop
 
-**Where do your AI tokens go?** `toktop` is a terminal dashboard of the tokens you spend across your AI coding tools: Claude Code, opencode, zcode, dsh and OpenBot. It covers every tool, every model and every day, and shows what all of it would cost at API prices.
+**Where do your AI tokens go?** `toktop` is a terminal dashboard of the tokens you spend across your AI coding tools: Claude Code, Codex, Gemini CLI, opencode, Cline and ten more. It covers every tool, every model and every day, and shows what all of it would cost at API prices.
 
 Everything runs locally. It reads the usage data each app already keeps on disk. The only network call it makes is an anonymous daily download of public model prices.
 
@@ -10,7 +10,7 @@ Everything runs locally. It reads the usage data each app already keeps on disk.
 
 ## Features
 
-- **One view for every tool.** Each source can be switched on and off and has its own fixed colour.
+- **One view for every tool.** On first launch you pick the apps you use from a list; toktop finds their data on its own. Each source has its own colour and can be switched on and off.
 - **History that never shrinks.** Usage is copied into toktop's own database, and each value keeps its maximum. If you uninstall an app or it prunes old sessions, your totals stay.
 - **Yearly heatmap, stacked daily chart and a calendar.** Hover for details and click a day to drill in.
 - **Models and sessions tables.** Sort them by any column and search sessions by title, project or model.
@@ -49,7 +49,7 @@ uv venv && uv pip install -e ".[dev]"
 
 ```text
 toktop                 open the dashboard
-toktop -s claude       start with only one source (opencode | zcode | claude | dsh | openbot)
+toktop -s claude       start with only one source (claude | codex | gemini | opencode | …)
 toktop --text          plain-text summary (also used automatically when piping: toktop | less)
 toktop --rebuild       re-read the installed apps from scratch (data from deleted apps is kept)
 toktop --demo          made-up data
@@ -60,6 +60,7 @@ toktop --lang es       interface language (default: system locale)
 - `1`–`5` switch tabs.
 - `←` / `→` change the month in the calendar, or the period elsewhere. `p` moves to the next period.
 - `o` `z` `c` `e` `b` toggle a source and `t` turns them all on.
+- `a` opens the app list.
 - `/` searches sessions.
 - `r` re-reads the apps.
 - `q` quits and `Ctrl+P` opens the command palette.
@@ -68,13 +69,30 @@ toktop --lang es       interface language (default: system locale)
 
 ## Supported sources
 
-| Source | What it reads |
+These are read automatically once checked in the app list (`a`):
+
+| App | What it reads |
 |---|---|
 | **Claude Code** | `~/.claude/projects/**/*.jsonl`: `message.usage` of each assistant message, counted once even when streamed across several lines. |
+| **Codex CLI** | `~/.codex/sessions/**/rollout-*.jsonl`: per-request `token_count` deltas. Replays in forked sessions are skipped. |
+| **Gemini CLI** | `~/.gemini/tmp/*/chats/session-*`: the `tokens` of each Gemini message. |
+| **Qwen Code** | `~/.qwen/projects/*/chats/*.jsonl`: `usageMetadata` of each assistant record. |
 | **opencode** | `opencode.db` (`session_v2`, or `session` in older versions): one row per session, with title and folder. |
+| **Goose** | `goose/sessions/sessions.db`: the per-request `usage_ledger`, or each session's totals in older versions. |
+| **Amp** | `~/.local/share/amp/threads/T-*.json`: usage of each assistant message. |
+| **Cline, Roo Code, Kilo Code** | `tasks/*/ui_messages.json` in the extension's storage of VS Code, Cursor, Windsurf, VSCodium and other forks. |
+| **Zed** | `threads/threads.db`: token usage of each agent thread (zstd-compressed threads need Python 3.14+ or the `zstandard` package). |
 | **zcode** | `~/.zcode/cli/db/db.sqlite`, table `model_usage`. Its `input_tokens` includes cache reads, so they are subtracted. |
-| **dsh** | A JSONL usage log, one line per request, plus project names from `~/.dsh/sessions`. |
 | **OpenBot** | OpenBot agents run on Claude Code and opencode. Sessions whose folder lives under `…/OpenBot/…` count as `openbot` instead of being counted twice, and they are named after the agent. |
+
+These need a one-time setup. When you check them, toktop shows a text to paste into your AI agent so it sets them up for you:
+
+| App | How |
+|---|---|
+| **dsh** (deepseek-harness) | A plugin appends one JSON line per request to `deepseek-harness.jsonl` in toktop's data folder. |
+| **Aider** | `analytics-log:` in `~/.aider.conf.yml` makes Aider write a local event log (it does not send anything). That log has no cache split. |
+
+Cursor, Windsurf and GitHub Copilot keep usage only on their servers, so they can't be read locally. Crush only stores the last request's tokens, so it can't be totalled either.
 
 Paths are detected on macOS, Linux and Windows. If an app keeps its data somewhere else, or you want to switch a source off, use a config file (see [`config.example.toml`](config.example.toml)): `~/.config/toktop/config.toml` (Windows: `%APPDATA%\toktop\config.toml`).
 

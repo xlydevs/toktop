@@ -74,5 +74,37 @@ def disabled_sources():
     return set((CONFIG.get("sources") or {}).get("disabled") or [])
 
 
+def enabled_sources():
+    """Names chosen in the first-run picker ([sources] enabled), or None if it was never shown."""
+    v = (CONFIG.get("sources") or {}).get("enabled")
+    return list(v) if isinstance(v, list) else None
+
+
+def save_enabled(names, path=None):
+    """Write [sources] enabled = [...] keeping the rest of the file as it is."""
+    path = path or config_path()
+    line = "enabled = [" + ", ".join(f'"{n}"' for n in names) + "]"
+    lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
+    sec, start, done = None, None, False
+    for i, ln in enumerate(lines):
+        st = ln.strip()
+        if st.startswith("[") and st.endswith("]"):
+            if sec == "sources" and not done:
+                j = i
+                while j > start + 1 and not lines[j - 1].strip(): j -= 1
+                lines.insert(j, line); done = True; break
+            sec = st.strip("[]").strip()
+            if sec == "sources": start = i
+        elif sec == "sources" and st.split("=")[0].strip() == "enabled":
+            lines[i] = line; done = True; break
+    if not done:
+        if start is None:
+            lines += (["", "[sources]"] if lines else ["[sources]"])
+        lines.append(line)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    CONFIG.setdefault("sources", {})["enabled"] = list(names)
+
+
 def env_dirs():
     return [Path(os.environ[e]) for e in ("LOCALAPPDATA", "APPDATA", "XDG_DATA_HOME") if os.environ.get(e)]
