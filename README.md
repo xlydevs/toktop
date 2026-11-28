@@ -24,12 +24,29 @@ Everything runs locally. It reads the usage data each app already keeps on disk.
 
 ## Install
 
-You need Python 3.11+.
+You don't need Python or anything else first. Open a terminal and paste one line.
+
+**macOS and Linux** (Terminal):
 
 ```bash
-pipx install toktop        # or: uv tool install toktop
+curl -LsSf https://raw.githubusercontent.com/xlydevs/toktop/main/install.sh | sh
+```
+
+**Windows** (PowerShell):
+
+```powershell
+irm https://raw.githubusercontent.com/xlydevs/toktop/main/install.ps1 | iex
+```
+
+It installs [uv](https://docs.astral.sh/uv/) (one small program that brings its own Python), then toktop. Then open a new terminal and run:
+
+```bash
 toktop
 ```
+
+To update, paste the same line again. To remove it: `uv tool uninstall toktop`. You can read both scripts first: [install.sh](install.sh), [install.ps1](install.ps1).
+
+Already have uv? `uv tool install "toktop @ https://github.com/xlydevs/toktop/archive/refs/heads/main.tar.gz"` does the same (Python 3.11+). `pipx install toktop` works once the package is on PyPI.
 
 Try it without any of the apps installed. The demo uses made-up data, and reads and writes nothing:
 

@@ -1,0 +1,38 @@
+name: Installers
+
+# Runs install.sh / install.ps1 on clean machines, the way a new user would, and checks toktop starts.
+on:
+  push:
+    branches: [main]
+    paths: ["install.sh", "install.ps1", ".github/workflows/install.yml", "pyproject.toml"]
+  workflow_dispatch:
+
+jobs:
+  unix:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh install.sh
+      - run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          toktop -V
+          toktop --demo --text > demo.txt
+          head -3 demo.txt
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: powershell
+        run: .\install.ps1
+      - shell: powershell
+        run: |
+          $env:Path = "$env:USERPROFILE\.local\bin;$env:Path"
+          toktop -V
+          toktop --demo --text > demo.txt
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          Get-Content demo.txt -TotalCount 3

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- One-line installer for macOS, Linux and Windows (`install.sh`, `install.ps1`).
 - New sources: Codex CLI, Gemini CLI, Qwen Code, Goose, Amp, Cline, Roo Code, Kilo Code and Zed.
 - App picker on first launch (and with `a`): check the apps you use; toktop finds their data.
 - dsh and Aider show copyable setup instructions for your AI agent.
