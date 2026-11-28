@@ -33,6 +33,5 @@ jobs:
         run: |
           $env:Path = "$env:USERPROFILE\.local\bin;$env:Path"
           toktop -V
-          toktop --demo --text > demo.txt
+          toktop --demo --text
           if ($LASTEXITCODE -ne 0) { exit 1 }
-          Get-Content demo.txt -TotalCount 3
