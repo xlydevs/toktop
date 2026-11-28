@@ -32,6 +32,8 @@ jobs:
       - shell: powershell
         run: |
           $env:Path = "$env:USERPROFILE\.local\bin;$env:Path"
+          $env:PYTHONUTF8 = "1"  # toktop's --text output needs UTF-8; a non-console stdout is cp1252 on Windows
           toktop -V
-          toktop --demo --text
+          toktop --demo --text > demo.txt
           if ($LASTEXITCODE -ne 0) { exit 1 }
+          Get-Content demo.txt -TotalCount 3
